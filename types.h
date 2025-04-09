@@ -51,7 +51,7 @@ enum gpio_statuses {
 enum gpio_init_flags {
     GPIO_INIT_GPIO = 1,
     GPIO_INIT_I2C = 2,
-};
+}; 
 
 
 #define GPIO_INIT_COUNT 2

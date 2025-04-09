@@ -1,0 +1,5 @@
+Doxyfile
+
+*.o
+*.so
+*.a
