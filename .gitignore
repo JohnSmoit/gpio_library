@@ -3,3 +3,7 @@ Doxyfile
 *.o
 *.so
 *.a
+*.out
+
+build
+bin
