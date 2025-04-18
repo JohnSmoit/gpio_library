@@ -35,7 +35,6 @@ typedef int32_t i32;
 typedef uint64_t u64;
 typedef int64_t i64;
 
-typedef uint8_t bool;
 
 // TODO: Partition GPIO statuses into 2 16-bit sections
 // and reserve the additional 16 bits for more specific information
