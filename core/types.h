@@ -1,10 +1,10 @@
 
 /***************************************************************
-* Class:: CSC-615-01 Spring 2024
+* Class:: CSC-615-01 Spring 2025
 * Name:: Ryan Algazi
 * Student ID:: 921914536
 * Github-Name:: JohnSmoit
-* Project:: Assignment 2 - Tapeless Ruler
+* Project:: Final Project -- THE CAR
 *
 * File:: types.h
 *
@@ -34,24 +34,6 @@ typedef int32_t i32;
 
 typedef uint64_t u64;
 typedef int64_t i64;
-
-
-// TODO: Partition GPIO statuses into 2 16-bit sections
-// and reserve the additional 16 bits for more specific information
-// (which function failed, underlying reason, etc)
-enum gpio_statuses {
-    GPIO_SUCCESS,
-    GPIO_TIMEOUT,
-    GPIO_ERR_MMAP,
-    GPIO_ERR_IO_I2C,
-    GPIO_ERR_MEMORY,
-};
-
-enum gpio_init_flags {
-    GPIO_INIT_GPIO = 1,
-    GPIO_INIT_I2C = 2,
-}; 
-
 
 #define GPIO_INIT_COUNT 2
 

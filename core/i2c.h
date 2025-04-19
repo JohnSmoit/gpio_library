@@ -1,10 +1,10 @@
 
 /***************************************************************
-* Class:: CSC-615-01 Spring 2024
+* Class:: CSC-615-01 Spring 2025
 * Name:: Ryan Algazi
 * Student ID:: 921914536
 * Github-Name:: JohnSmoit
-* Project:: Assignment 2 - Tapeless Ruler
+* Project:: Final Project -- THE CAR
 *
 * File:: i2c.h
 *
@@ -51,7 +51,7 @@ int i2c_deinit(gpio_state * state);
  * @param len length of buf
  * @return GPIO_SUCCESS if successful
  */
-int i2c_write_bytes(gpio_state * state, const u8 * buf, usize len);
+int i2c_write_bytes(gpio_state * state, u8 reg, const u8 * buf, usize len);
 
 /**
  * @brief  Reads all the bytes from i2c device into buf

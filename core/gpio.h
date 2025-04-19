@@ -30,6 +30,23 @@ typedef struct gpio_state {
     gpio_i2c_state * i2c;
 } gpio_state;
 
+// gpio status codes, representing differnt ways a gpio or i2c operation could complete.
+// GPIO_SUCCESS represents a universal operation success,and the other statuses
+// are meant to specify different error values an operation could have.
+enum gpio_statuses {
+    GPIO_SUCCESS,
+    GPIO_TIMEOUT, // an operation timed out
+    GPIO_ERR_MMAP, //memory map failed 
+    GPIO_ERR_IO_I2C,// some IO related I2c error happened (for example, the )
+    GPIO_ERR_MEMORY,
+};
+
+enum gpio_init_flags {
+    GPIO_INIT_GPIO = 1,
+    GPIO_INIT_I2C = 2,
+    GPIO_INIT_ALL = 3,
+}; 
+
 /**
  * @brief Handles GPIO errors by printing an error message, cleaning up, and exiting.
  *

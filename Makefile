@@ -1,14 +1,16 @@
 CC := gcc
 AR := ar
 
-SRCS := gpio.c i2c.c
+SRCS := core/gpio.c core/i2c.c 
 
 BUILD_DIR := build
 EXE_NAME := libCar
 
 OBJS := $(SRCS:%.c=$(BUILD_DIR)/%.o)
 
-CFLAGS := -Wall -Wextra -g -I.
+INCLUDE_DIRS := . ./utilities
+
+CFLAGS := -Wall -Wextra -Werror -g $(INCLUDE_DIRS:%= -I%)
 LDFLAGS := -lrt -lm
 
 INSTALL_DIR := bin
@@ -17,7 +19,9 @@ $(EXE_NAME): $(OBJS)
 	$(AR) rcs $@.a $^
 
 dirs: 
-	mkdir -p build
+	mkdir -p build/core
+	mkdir -p build/utilities
+	mkdir -p build/drivers
 
 
 $(BUILD_DIR)/%.o: %.c dirs
@@ -25,13 +29,17 @@ $(BUILD_DIR)/%.o: %.c dirs
 
 clean:
 	rm -r build
+	rm -r bin
 	rm $(EXE_NAME).a
+
+
 .PHONY: clean
 
-install: $(EXE_NAME)
-	mkdir -p $(INSTALL_DIR)
-	mkdir -p $(INSTALL_DIR)/include
+install_dirs:
 	mkdir -p $(INSTALL_DIR)/lib
+	mkdir -p $(INSTALL_DIR)/include
+
+install: $(EXE_NAME) install_dirs
 
 	mv $(EXE_NAME).a $(INSTALL_DIR)/lib
-	cp ./*.h $(INSTALL_DIR)/include
+	find . -name '*.h' -exec cp --parents {} $(INSTALL_DIR)/include \;

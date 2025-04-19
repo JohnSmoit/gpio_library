@@ -7,3 +7,6 @@ Doxyfile
 
 build
 bin
+
+.clangd
+compile_commands.json
