@@ -64,26 +64,31 @@ u8 i2c_deinit(gpio_i2c_state state) {
     return GPIO_SUCCESS;
 }
 
-u8 i2c_begin(gpio_i2c_state state) {
-    if (state->i2c_fd > 0) {
+u8 i2c_begin(i2c_handle_slot slot) {
+    if (slot->parent->i2c_fd > 0 || slot->is_free) {
         car_log_error("I2C device file already opened! Pretty pleaze call i2c_end first,\n");
         return GPIO_ERR_I2C_ORDER;
     }
 
-    if ((state->i2c_fd = open("/dev/i2c-1", O_RDWR)) < 0) {
+    if ((slot->parent->i2c_fd = open("/dev/i2c-1", O_RDWR)) < 0) {
         car_log_error("I2C device file failed to open. WOMP WOMP.\n");
+        return GPIO_ERR_IO_I2C;
+    }
+
+    if (ioctl(slot->parent->i2c_fd, I2C_SLAVE, slot->slave_address) == -1) {
+        car_log_error("Failed to set slave/controller address %d\n", slot->slave_address);
         return GPIO_ERR_IO_I2C;
     }
     return GPIO_SUCCESS;
 }
 
-u8 i2c_end(gpio_i2c_state state) {
-    if (state->i2c_fd <= 0) {
+u8 i2c_end(i2c_handle_slot slot) {
+    if (slot->parent->i2c_fd <= 0) {
         car_log_error("I2C device file never opened! Please call i2c_begin first.");
         return GPIO_ERR_I2C_ORDER;
     }
 
-    if (close(state->i2c_fd) != 0) {
+    if (close(slot->parent->i2c_fd) != 0) {
         car_log_error("I2c Device failed to close, this is probably bad.\n");
         return GPIO_ERR_IO_I2C;
     }
@@ -97,12 +102,12 @@ u8 i2c_write_bytes(i2c_handle_slot slot, u8 reg, const u8 * buf, usize len) {
     rbuf[0] = reg;
     memcpy(rbuf + 1, buf, len);
 
-    i2c_begin(slot->parent);
+    i2c_begin(slot);
     if (write(slot->parent->i2c_fd, buf, len) == -1) {
         car_log_error("Failed to write stuff to i2c device %d\n", slot->slave_address);
         return GPIO_ERR_IO_I2C;
     }
-    i2c_end(slot->parent);
+    i2c_end(slot);
 
     return GPIO_SUCCESS;
 }
@@ -111,14 +116,14 @@ u8 i2c_read_bytes(i2c_handle_slot slot, u8 reg, u8 * buf, usize len) {
 
     u8 wbuf[1] = {reg};
     
-    i2c_begin(slot->parent);
+    i2c_begin(slot);
     write(slot->parent->i2c_fd, wbuf, 1);
     if (read(slot->parent->i2c_fd, buf, len) != -1) {
         car_log_error("Failed to read bytes, either the write or read in this function failed.");
         return GPIO_ERR_IO_I2C;
     }
 
-    i2c_end(slot->parent);
+    i2c_end(slot);
 
     return GPIO_SUCCESS;
 }

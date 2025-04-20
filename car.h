@@ -2,7 +2,9 @@
 #define CAR_H
 
 #include "types.h"
-#include "gpio.h"
-#include "i2c.h"
+#include "core/gpio.h"
+#include "core/i2c.h"
+
+
 
 #endif

@@ -1,7 +1,7 @@
 CC := gcc
 AR := ar
 
-SRCS := core/gpio.c core/i2c.c 
+SRCS := core/gpio.c core/i2c.c drivers/color.c
 
 BUILD_DIR := build
 EXE_NAME := libCar

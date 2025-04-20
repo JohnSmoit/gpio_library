@@ -35,10 +35,10 @@ typedef struct _i2c_handle_slot * i2c_handle_slot;
 u8 i2c_init(gpio_i2c_state state);
 
 // Begin writing/reading i2c bytes and stuff
-u8 i2c_begin(gpio_i2c_state state);
+u8 i2c_begin(i2c_handle_slot state);
 
 // Stop writing/reading i2c bytes and stuff
-u8 i2c_end(gpio_i2c_state state);
+u8 i2c_end(i2c_handle_slot state);
 
 
 /**
