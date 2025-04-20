@@ -35,6 +35,8 @@ typedef int32_t i32;
 typedef uint64_t u64;
 typedef int64_t i64;
 
+#define INVALID_HANDLE_VALUE (void *)0
+
 #define GPIO_INIT_COUNT 2
 
 #define PCA_REG_PART_LO 0
@@ -66,5 +68,13 @@ enum pca_channel {
     PCA_CHANNEL_14,
     PCA_CHANNEL_15,
 };
+
+enum car_statuses {
+    CAR_FAILURE,
+    CAR_SUCCESS,
+};
+
+#define TRUE 1
+#define FALSE 0
 
 #endif

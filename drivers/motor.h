@@ -4,6 +4,7 @@
 #include "types.h"
 
 struct _motor_control_info;
+
 typedef struct _motor_control_info * motor_control_info;
 
 u8 motor_init(motor_control_info control, u8 address, u8 motor);

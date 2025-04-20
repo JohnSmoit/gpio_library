@@ -18,7 +18,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -47,12 +46,22 @@
 #define GPIO_GET(st, g) ((*(st->gpio+13)&(1 << g)) >> g)
 #define GPIO_CLR(st) *(st->gpio+10)
 
+
 const char * errs[] = {
     [GPIO_SUCCESS] = "Everything totally worked",
     [GPIO_ERR_MMAP] = "Failed to map GPIO Addresses",
     [GPIO_TIMEOUT] = "Pin state changed timed out",
     [GPIO_ERR_IO_I2C] = "Failed to perform I2C-related IO",
     [GPIO_ERR_MEMORY] = "Failed to allocate memory",
+    [GPIO_ERR_I2C_ORDER] = "I2c begin/end called out of order",
+};
+
+
+struct _gpio_state {
+    volatile unsigned * gpio;
+    uflags init_flags;
+
+    gpio_i2c_state i2c;
 };
 
 
@@ -60,16 +69,16 @@ const char * errs[] = {
  * Helper functions.
  * Prepares the specified pin number to write output/read input.
  * */
-void setup_pin_out(gpio_state * state, unsigned int pnr) {
+void setup_pin_out(gpio_state state, unsigned int pnr) {
     INP_GPIO(state, pnr);
     OUT_GPIO(state, pnr);
 }
 
-void setup_pin_in(gpio_state * state, unsigned int pnr) {
+void setup_pin_in(gpio_state state, unsigned int pnr) {
     INP_GPIO(state, pnr);
 }
 
-int gpio_exit_err(gpio_state * state, int resultant) {
+int gpio_exit_err(gpio_state state, int resultant) {
     if (resultant != GPIO_SUCCESS) {
         const char * msg = errs[resultant];
 
@@ -90,7 +99,7 @@ int gpio_exit_err(gpio_state * state, int resultant) {
 void bprint(int state);
 
 int gpio_output_pin_ms(
-    gpio_state * state,
+    gpio_state state,
     unsigned int pnr, 
     unsigned int time_ms
 ) {
@@ -118,7 +127,7 @@ void bprint(int state) {
     putc('\n', stdout);
 }
 
-int gpio_init_pins(gpio_state * state, int mode, int n, ...) {
+int gpio_init_pins(gpio_state state, int mode, int n, ...) {
     va_list args;
     va_start(args, n);
     
@@ -137,7 +146,7 @@ int gpio_init_pins(gpio_state * state, int mode, int n, ...) {
     return GPIO_SUCCESS;
 }
 
-int gpio_get_input(gpio_state * state, unsigned int pnr) {
+int gpio_get_input(gpio_state state, unsigned int pnr) {
     return GPIO_GET(state, pnr);
 }
 
@@ -165,7 +174,7 @@ time_t time_us(void) {
 }
 
 int gpio_await_ligmad(
-    gpio_state * state, 
+    gpio_state state, 
     int pin_id, 
     int timeout_ms,
     double * wait_time
@@ -204,12 +213,12 @@ FUCK:
 }
 
 // partial initialization routines
-int gpio_init_memory(gpio_state *);
-int gpio_init_i2c(gpio_state *);
+int gpio_init_memory(gpio_state);
+int gpio_init_i2c(gpio_state);
 
-typedef int (*gpio_lifecycle_routine)(gpio_state *);
+typedef int (*gpio_lifecycle_routine)(gpio_state);
 
-int gpio_init(gpio_state * state, uflags init_flags) {
+int gpio_init(gpio_state state, uflags init_flags) {
 
     state->i2c = NULL;
 
@@ -234,7 +243,7 @@ int gpio_init(gpio_state * state, uflags init_flags) {
     return GPIO_SUCCESS;
 }
 
-int gpio_init_memory(gpio_state * state) {
+int gpio_init_memory(gpio_state state) {
     int mem_fd;
     void * gpio_map;
 
@@ -278,14 +287,14 @@ int gpio_init_memory(gpio_state * state) {
     return GPIO_SUCCESS;
 }
 
-int gpio_init_i2c(gpio_state * state) {
-    return i2c_init(state);
+int gpio_init_i2c(gpio_state state) {
+    return i2c_init(state->i2c);
 }
 
-int gpio_memory_deinit(gpio_state * state);
-int gpio_i2c_deinit(gpio_state * state);
+int gpio_memory_deinit(gpio_state state);
+int gpio_i2c_deinit(gpio_state state);
 
-int gpio_deinit(gpio_state * state) {
+int gpio_deinit(gpio_state state) {
     static gpio_lifecycle_routine deinit_table[GPIO_INIT_COUNT] = {
         [0] = gpio_memory_deinit,
         [1] = gpio_i2c_deinit,
@@ -308,7 +317,7 @@ int gpio_deinit(gpio_state * state) {
     return GPIO_SUCCESS;
 }
 
-int gpio_memory_deinit(gpio_state * state) {
+int gpio_memory_deinit(gpio_state state) {
     if (state->gpio) {
         munmap((unsigned *)state->gpio, BLOCK_SIZE);
     }
@@ -316,6 +325,6 @@ int gpio_memory_deinit(gpio_state * state) {
     return GPIO_SUCCESS;
 }
 
-int gpio_i2c_deinit(gpio_state * state) {
-    return i2c_deinit(state);
+int gpio_i2c_deinit(gpio_state state) {
+    return i2c_deinit(state->i2c);
 }

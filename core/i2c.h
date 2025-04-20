@@ -18,8 +18,10 @@
 
 #include "types.h"
 
-typedef struct gpio_i2c_state gpio_i2c_state;
-typedef struct gpio_state gpio_state;
+typedef struct _gpio_i2c_state * gpio_i2c_state;
+typedef struct _gpio_state * gpio_state;
+
+typedef struct _i2c_handle_slot * i2c_handle_slot;
 
 
 /**
@@ -30,7 +32,14 @@ typedef struct gpio_state gpio_state;
  * @param state 
  * @return 
  */
-int i2c_init(gpio_state * state);
+u8 i2c_init(gpio_i2c_state state);
+
+// Begin writing/reading i2c bytes and stuff
+u8 i2c_begin(gpio_i2c_state state);
+
+// Stop writing/reading i2c bytes and stuff
+u8 i2c_end(gpio_i2c_state state);
+
 
 /**
  * @brief 
@@ -38,7 +47,7 @@ int i2c_init(gpio_state * state);
  * @param state 
  * @return 
  */
-int i2c_deinit(gpio_state * state);
+u8 i2c_deinit(gpio_i2c_state state);
 
 /**
  * @brief Writes all the bytes in buf to the current i2c controller
@@ -51,7 +60,7 @@ int i2c_deinit(gpio_state * state);
  * @param len length of buf
  * @return GPIO_SUCCESS if successful
  */
-int i2c_write_bytes(gpio_state * state, u8 reg, const u8 * buf, usize len);
+u8 i2c_write_bytes(i2c_handle_slot slot, u8 reg, const u8 * buf, usize len);
 
 /**
  * @brief  Reads all the bytes from i2c device into buf
@@ -62,16 +71,15 @@ int i2c_write_bytes(gpio_state * state, u8 reg, const u8 * buf, usize len);
  * @param len length of buffer
  * @return 
  */
-int i2c_read_bytes(gpio_state * state, u8 reg, u8 * buf, usize len);
+u8 i2c_read_bytes(i2c_handle_slot slot, u8 reg, u8 * buf, usize len);
 
-/**
- * @brief set the currently active slave address (or controller)
- *
- * @param state initailized gpio state
- * @param addr address to set
- * @return GPIO_SUCCESS
- */
-int i2c_init_slave_address(gpio_state * state, u8 addr);
+
+// Get an i2c handle which stores the active device address
+// you want to use in any i2c operations
+// honestly, this doesn't have a real need to exist,
+// since the way I do the memory means that they rely on their 
+// containing gpio_i2c_state's lifetime to exceed their own.
+i2c_handle_slot i2c_get_device_handle(u8 address, gpio_i2c_state state);
 
 
 #endif

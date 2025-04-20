@@ -21,24 +21,22 @@
 #define GPIO_INPUT      0
 #define GPIO_OUTPUT     1
 
-typedef struct gpio_i2c_state gpio_i2c_state;
+typedef struct _gpio_i2c_state * gpio_i2c_state;
 
-typedef struct gpio_state {
-    volatile unsigned * gpio;
-    uflags init_flags;
-
-    gpio_i2c_state * i2c;
-} gpio_state;
+typedef struct _gpio_state * gpio_state;
 
 // gpio status codes, representing differnt ways a gpio or i2c operation could complete.
 // GPIO_SUCCESS represents a universal operation success,and the other statuses
 // are meant to specify different error values an operation could have.
+//
+// TODO: This is going to be phased out in favor of 
 enum gpio_statuses {
     GPIO_SUCCESS,
     GPIO_TIMEOUT, // an operation timed out
     GPIO_ERR_MMAP, //memory map failed 
     GPIO_ERR_IO_I2C,// some IO related I2c error happened (for example, the )
     GPIO_ERR_MEMORY,
+    GPIO_ERR_I2C_ORDER,
 };
 
 enum gpio_init_flags {
@@ -65,7 +63,7 @@ enum gpio_init_flags {
  *
  * @example examples/example_exit_err.c
  */
-int gpio_exit_err(gpio_state * state, int resultant);
+int gpio_exit_err(gpio_state state, int resultant);
 
 /**
  * @brief initializes library functionality, populating the state structure.
@@ -80,7 +78,7 @@ int gpio_exit_err(gpio_state * state, int resultant);
  *
  * @see gpio_statuses
  */
-int gpio_init(gpio_state * state, uflags init_flags);
+int gpio_init(gpio_state state, uflags init_flags);
 
 /**
  * @brief denitiializes library resources, use before exiting program.
@@ -93,7 +91,7 @@ int gpio_init(gpio_state * state, uflags init_flags);
  * @param state initialized gpio state
  * @return  GPIO_SUCCESS if all modules were successfully uninitialized
  */
-int gpio_deinit(gpio_state * state);
+int gpio_deinit(gpio_state state);
 
 /**
  * @brief variadic function to initialize gpio pins for reading and writing...
@@ -109,7 +107,7 @@ int gpio_deinit(gpio_state * state);
  *  are JANKY AF
  * @return GPIO_SUCCESS if all of the pins were successfully initialized
  */
-int gpio_init_pins(gpio_state * state, int mode, int n,...);
+int gpio_init_pins(gpio_state state, int mode, int n,...);
 
 /**
  * @brief outputs a signal to a GPIO_OUTPUT initialized pin
@@ -126,7 +124,7 @@ int gpio_init_pins(gpio_state * state, int mode, int n,...);
  * @return GPIO_SUCCESS at all times unless it segfaults
  */
 int gpio_output_pin_ms(
-    gpio_state * state, 
+    gpio_state state, 
     unsigned int pin_id, 
     unsigned int ms
 );
@@ -151,7 +149,7 @@ int gpio_output_pin_ms(
  * or GPIO_TIMEOUT if timeout occurs.
  */
 int gpio_await_ligmad(
-    gpio_state * state, 
+    gpio_state state, 
     int pin_id, 
     int timeout_ms,
     double * wait_time
@@ -180,6 +178,6 @@ int gpio_sleep_ms(unsigned int ms);
  * @param pnr pin number
  * @return GPIO_SUCCESS at all times
  */
-int gpio_get_input(gpio_state * state, unsigned int pnr);
+int gpio_get_input(gpio_state state, unsigned int pnr);
 
 #endif
