@@ -18,7 +18,7 @@ typedef struct rgba_col {
 
 // initialize an rgb sensor with its relevant state information
 // additionally, probably needs to know which i2c device to use...
-u8 init_rgb_sensor(rgba_sensor_info info, u8 address, gpio_i2c_state i2c_state);
+u8 init_rgb_sensor(rgba_sensor_info info, u8 address, gpio_i2c_state i2c_state, u8 gain, u8 integration);
 
 // get the rgb sensor's output values in an rgba color format
 rgba_col get_sensor_value(rgba_sensor_info info);

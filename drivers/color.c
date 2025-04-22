@@ -12,6 +12,13 @@
 #define TCS34725_GDATAL (0x18) /**< Green channel data low byte */
 #define TCS34725_BDATAL (0x1A) /**< Blue channel data low byte */
 
+#define TCS34725_REG_ENABLE 0x0
+#define TCS34725_ENABLE_PON 0x1
+#define TCS34725_ENABLE_AEN 0x2
+
+#define TCS34725_REG_INTEGRATION 0x01
+#define TCS34725_REG_GAIN 0x0F
+
 struct _rgba_sensor_info {
     u8 i2c_address;
     i2c_handle_slot i2c_handle;
@@ -32,7 +39,7 @@ void init_gamma_table() {
     }
 }
 
-u8 init_rgb_sensor(rgba_sensor_info info, u8 address, gpio_i2c_state i2c_state) {
+u8 init_rgb_sensor(rgba_sensor_info info, u8 address, gpio_i2c_state i2c_state, u8 gain, u32 integration) {
     info->i2c_address = address;
     info->i2c_handle = i2c_get_device_handle(address, i2c_state);
     if (info->i2c_handle == INVALID_HANDLE_VALUE) {
@@ -43,6 +50,17 @@ u8 init_rgb_sensor(rgba_sensor_info info, u8 address, gpio_i2c_state i2c_state) 
     if (gamma_table[TABLE_SIZE - 1] == 0) {
         init_gamma_table();
     }
+    
+    u8 single_reg = TCS34725_ENABLE_PON; 
+    i2c_write_bytes(info->i2c_handle, TCS34725_REG_ENABLE, &single_reg, 1);
+    
+    gpio_sleep_ms(3000);
+    
+    single_reg = TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN;
+    i2c_write_bytes(info->i2c_handle, TCS34725_REG_ENABLE, &single_reg, 1);
+
+    i2c_write_bytes(info->i2c_handle, TCS34725_REG_INTEGRATION, (u8 *)&integration, 4);
+    i2c_write_bytes(info->i2c_handle, TCS34725_REG_GAIN, &gain, 1);
 
     return CAR_SUCCESS;
 }
