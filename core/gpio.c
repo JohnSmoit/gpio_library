@@ -220,6 +220,8 @@ typedef int (*gpio_lifecycle_routine)(gpio_state);
 
 int gpio_init(gpio_state state, uflags init_flags) {
 
+    state = (gpio_state)malloc(sizeof(struct _gpio_state));
+
     state->i2c = NULL;
 
     static gpio_lifecycle_routine init_table[GPIO_INIT_COUNT] = {
@@ -313,6 +315,8 @@ int gpio_deinit(gpio_state state) {
             }
         }
     }
+
+    free(state);
 
     return GPIO_SUCCESS;
 }

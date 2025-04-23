@@ -40,4 +40,6 @@ u8 motor_deinit(motor_control_info * control) {
     
     free(c);
     *control = NULL;
+    
+    return CAR_SUCCESS;
 }
