@@ -81,5 +81,6 @@ u8 i2c_read_bytes(i2c_handle_slot slot, u8 reg, u8 * buf, usize len);
 // containing gpio_i2c_state's lifetime to exceed their own.
 i2c_handle_slot i2c_get_device_handle(u8 address, gpio_i2c_state state);
 
+void i2c_free_device_handle(i2c_handle_slot slot);
 
 #endif
