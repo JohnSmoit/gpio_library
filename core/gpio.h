@@ -180,4 +180,6 @@ int gpio_sleep_ms(unsigned int ms);
  */
 int gpio_get_input(gpio_state state, unsigned int pnr);
 
+gpio_i2c_state gpio_get_i2c_state(gpio_state state);
+
 #endif

@@ -328,3 +328,9 @@ int gpio_memory_deinit(gpio_state state) {
 int gpio_i2c_deinit(gpio_state state) {
     return i2c_deinit(state->i2c);
 }
+
+gpio_i2c_state gpio_get_i2c_state(gpio_state state) {
+    if (!state) return INVALID_HANDLE_VALUE;
+    
+    return state->i2c;
+}
