@@ -26,7 +26,7 @@ u8 motor_init(motor_control_info * control, gpio_i2c_state state, u8 address, u8
 u8 motor_set_speed(motor_control_info control, u8 direction, u8 speed_percent) {
     car_log_info("POOTIS MOTOR SET: dir %d spd %d\n", direction, speed_percent);
 
-    return control != INVALID_HANDLE_VALUE;
+    return CAR_SUCCESS;
 }
 
 u8 motor_deinit(motor_control_info * control) {
@@ -40,4 +40,6 @@ u8 motor_deinit(motor_control_info * control) {
     
     free(c);
     *control = NULL;
+    
+    return CAR_SUCCESS;
 }
