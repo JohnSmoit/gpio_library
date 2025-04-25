@@ -78,7 +78,7 @@ int gpio_exit_err(gpio_state state, int resultant);
  *
  * @see gpio_statuses
  */
-int gpio_init(gpio_state state, uflags init_flags);
+int gpio_init(gpio_state * state, uflags init_flags);
 
 /**
  * @brief denitiializes library resources, use before exiting program.
@@ -91,7 +91,7 @@ int gpio_init(gpio_state state, uflags init_flags);
  * @param state initialized gpio state
  * @return  GPIO_SUCCESS if all modules were successfully uninitialized
  */
-int gpio_deinit(gpio_state state);
+int gpio_deinit(gpio_state * state);
 
 /**
  * @brief variadic function to initialize gpio pins for reading and writing...

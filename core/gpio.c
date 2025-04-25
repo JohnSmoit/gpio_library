@@ -90,7 +90,7 @@ int gpio_exit_err(gpio_state state, int resultant) {
             msg
         );
 
-        gpio_deinit(state);
+        gpio_deinit(&state);
         exit(EXIT_FAILURE);
     }
     
@@ -219,8 +219,9 @@ int gpio_init_i2c(gpio_state);
 
 typedef int (*gpio_lifecycle_routine)(gpio_state);
 
-int gpio_init(gpio_state state, uflags init_flags) {
+int gpio_init(gpio_state * st, uflags init_flags) {
 
+    gpio_state state = *st;
     state = (gpio_state)malloc(sizeof(struct _gpio_state));
 
     state->i2c = INVALID_HANDLE_VALUE;
@@ -248,6 +249,8 @@ int gpio_init(gpio_state state, uflags init_flags) {
 
         car_log_info("Successfully ran Init routine %d\n", i);
     }
+
+    *st = state;
     return GPIO_SUCCESS;
 }
 
@@ -302,7 +305,9 @@ int gpio_init_i2c(gpio_state state) {
 int gpio_memory_deinit(gpio_state state);
 int gpio_i2c_deinit(gpio_state state);
 
-int gpio_deinit(gpio_state state) {
+int gpio_deinit(gpio_state * st) {
+    
+    gpio_state state = *st;
     static gpio_lifecycle_routine deinit_table[GPIO_INIT_COUNT] = {
         [0] = gpio_memory_deinit,
         [1] = gpio_i2c_deinit,
@@ -323,6 +328,8 @@ int gpio_deinit(gpio_state state) {
     }
 
     free(state);
+
+    *st = INVALID_HANDLE_VALUE;
 
     return GPIO_SUCCESS;
 }
