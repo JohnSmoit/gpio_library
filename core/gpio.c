@@ -296,7 +296,7 @@ int gpio_init_memory(gpio_state state) {
 }
 
 int gpio_init_i2c(gpio_state state) {
-    return i2c_init(state->i2c);
+    return i2c_init(&state->i2c);
 }
 
 int gpio_memory_deinit(gpio_state state);
@@ -336,7 +336,7 @@ int gpio_memory_deinit(gpio_state state) {
 }
 
 int gpio_i2c_deinit(gpio_state state) {
-    return i2c_deinit(state->i2c);
+    return i2c_deinit(&state->i2c);
 }
 
 gpio_i2c_state gpio_get_i2c_state(gpio_state state) {
