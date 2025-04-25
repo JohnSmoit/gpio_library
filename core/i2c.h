@@ -32,7 +32,7 @@ typedef struct _i2c_handle_slot * i2c_handle_slot;
  * @param state 
  * @return 
  */
-u8 i2c_init(gpio_i2c_state state);
+u8 i2c_init(gpio_i2c_state * state);
 
 // Begin writing/reading i2c bytes and stuff
 u8 i2c_begin(i2c_handle_slot state);
@@ -47,7 +47,7 @@ u8 i2c_end(i2c_handle_slot state);
  * @param state 
  * @return 
  */
-u8 i2c_deinit(gpio_i2c_state state);
+u8 i2c_deinit(gpio_i2c_state * state);
 
 /**
  * @brief Writes all the bytes in buf to the current i2c controller

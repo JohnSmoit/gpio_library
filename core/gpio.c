@@ -14,6 +14,7 @@
 **************************************************************/
 #include "core/gpio.h"
 #include "core/i2c.h"
+#include "log.h"
 #include "types.h"
 
 #include <stdio.h>
@@ -222,7 +223,7 @@ int gpio_init(gpio_state state, uflags init_flags) {
 
     state = (gpio_state)malloc(sizeof(struct _gpio_state));
 
-    state->i2c = NULL;
+    state->i2c = INVALID_HANDLE_VALUE;
 
     static gpio_lifecycle_routine init_table[GPIO_INIT_COUNT] = {
         [0] = gpio_init_memory,
@@ -232,15 +233,20 @@ int gpio_init(gpio_state state, uflags init_flags) {
     state->init_flags = init_flags;
 
     for (int i = 0; i < GPIO_INIT_COUNT; i++) {
-        int flag_bit = init_flags & 1;
-        if (!flag_bit) continue;
+        car_log_info("Attempting routine %d!\n", i);
+        int flag_bit = init_flags & (1 << i);
+        if (!flag_bit) {
+            car_log_info("Skipping routine %d\n", i);
+            continue;
+        }
 
         int res = init_table[i](state);
         if (res != GPIO_SUCCESS) {
+            car_log_error("Failed routine %d!\n", i);
             return res;
         }
 
-        printf("Successfully ran routine %d\n", i);
+        car_log_info("Successfully ran Init routine %d\n", i);
     }
     return GPIO_SUCCESS;
 }

@@ -43,23 +43,31 @@ struct _gpio_i2c_state {
 };
 
 
-u8 i2c_init(gpio_i2c_state state) {
+u8 i2c_init(gpio_i2c_state * st) {
     // TODO: replace with custom allocator at some point
+    gpio_i2c_state state = *st;
     
+    state = (gpio_i2c_state)malloc(sizeof(struct _gpio_i2c_state));
     state->i2c_fd = -1;
     state->next_handle = 0;
     for (i32 i = 0; i < MAX_I2C_HANDLES; i++) {
         state->i2c_handles[i].is_free = FALSE;
         state->i2c_handles[i].parent = state;
     }
+
+    *st = state;
     return GPIO_SUCCESS;
 }
 
 
-u8 i2c_deinit(gpio_i2c_state state) {
+u8 i2c_deinit(gpio_i2c_state * st) {
+    gpio_i2c_state state = *st;
     if (state->i2c_fd >= 0 || close(state->i2c_fd) != 0) {
         return GPIO_ERR_IO_I2C;
     }
+
+    free(state);
+    *st = INVALID_HANDLE_VALUE;
 
     return GPIO_SUCCESS;
 }
@@ -130,7 +138,11 @@ u8 i2c_read_bytes(i2c_handle_slot slot, u8 reg, u8 * buf, usize len) {
 
 i2c_handle_slot i2c_get_device_handle(u8 address, gpio_i2c_state state) {
     i32 ind = 0;
-    for (; ind < MAX_I2C_HANDLES && !state->i2c_handles[ind].is_free; ind++);
+    
+    car_log_info("Starting handle acquisition turd turd\n");
+    for (; ind < MAX_I2C_HANDLES && !state->i2c_handles[ind].is_free; ind++) {
+        car_log_info("Handle %d is not free!\n", ind);
+    }
         
 
     if (ind == MAX_I2C_HANDLES) {

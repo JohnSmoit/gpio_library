@@ -28,9 +28,9 @@ $(BUILD_DIR)/%.o: %.c dirs
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:
-	rm -r build
-	rm -r bin
-	rm $(EXE_NAME).a
+	rm -rf build
+	rm -rf bin
+	rm -f $(EXE_NAME).a
 
 
 .PHONY: clean
