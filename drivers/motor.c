@@ -14,7 +14,8 @@ struct _motor_control_info {
 
 u8 motor_init(motor_control_info * control, gpio_i2c_state state, u8 address, u8 motor) {
     motor_control_info c = (motor_control_info)malloc(sizeof(struct _motor_control_info));
-
+    
+    car_log_info("State pointer address: %p\n", state);
     c->i2c_handle = i2c_get_device_handle(address, state);
     c->motor_slot = motor;
 
