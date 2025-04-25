@@ -51,7 +51,7 @@ u8 i2c_init(gpio_i2c_state * st) {
     state->i2c_fd = -1;
     state->next_handle = 0;
     for (i32 i = 0; i < MAX_I2C_HANDLES; i++) {
-        state->i2c_handles[i].is_free = FALSE;
+        state->i2c_handles[i].is_free = TRUE;
         state->i2c_handles[i].parent = state;
     }
 
