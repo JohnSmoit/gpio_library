@@ -13,6 +13,8 @@ typedef enum car_log_levels {
 
 #define CAR_DEBUG
 
+void do_stacktrace(int log_level);
+
 // this is a very disgusting macro i almost used
 // leaving it here just for reference
 #define VA_NARGS(...) \
@@ -40,6 +42,7 @@ typedef enum car_log_levels {
 do { \
     printf("[%s:%s line:%d -- %d]: ", __FILE__, __func__, __LINE__, log_level); \
     printf(fmt __VA_OPT__(,) __VA_ARGS__); \
+    do_stacktrace(log_level); \
        } while(0)
 #else
     #define car_log_impl(fmt, log_level, ...) 

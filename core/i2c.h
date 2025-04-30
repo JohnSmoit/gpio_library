@@ -40,6 +40,7 @@ u8 i2c_begin(i2c_handle_slot state);
 // Stop writing/reading i2c bytes and stuff
 u8 i2c_end(i2c_handle_slot state);
 
+u8 i2c_get_address(i2c_handle_slot slot);
 
 /**
  * @brief 
@@ -71,6 +72,9 @@ u8 i2c_write_bytes(i2c_handle_slot slot, u8 reg, const u8 * buf, usize len);
  * @param len length of buffer
  * @return 
  */
+
+u8 i2c_write_single(i2c_handle_slot slot, u8 reg, u8 buf);
+
 u8 i2c_read_bytes(i2c_handle_slot slot, u8 reg, u8 * buf, usize len);
 
 
