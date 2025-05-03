@@ -60,9 +60,9 @@ void set_motor_lvl(i2c_handle_slot slot, int speed, int direction, u8 motor) {
         c2 = PCA_CHANNEL_1;
         c3 = PCA_CHANNEL_2;
     } else {
-        c1 = PCA_CHANNEL_3;
-        c2 = PCA_CHANNEL_4;
-        c3 = PCA_CHANNEL_5;
+        c1 = PCA_CHANNEL_5;
+        c2 = PCA_CHANNEL_3;
+        c3 = PCA_CHANNEL_4;
     }
 
     set_pwm(slot, c1, 0, adj_spd);
